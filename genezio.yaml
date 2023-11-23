@@ -1,0 +1,7 @@
+name: weather-react-tailwind-typescript-template
+region: eu-west-3
+frontend:
+    path: ./build
+    subdomain: weather-react-tailwind-typescript-template
+scripts:
+    preFrontendDeploy: npm install && npm run build
