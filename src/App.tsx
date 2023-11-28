@@ -1,26 +1,43 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Route, Routes, Outlet, useLocation } from "react-router-dom";
+import Home from "./pages/Home";
+import WeatherApp from "./pages/WeatherApp";
+import NotFound from "./pages/NotFound";
+import { AnimatePresence, motion } from "framer-motion";
+import { ThemeProvider } from "@material-tailwind/react";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    let { pathname } = useLocation();
+
+    return (
+        <ThemeProvider>
+            <AnimatePresence>
+                <Routes>
+                    <Route
+                        path="/"
+                        element={
+                            <div className="flex h-full justify-center items-center">
+                                <div className="max-h-[48rem] max-w-6xl h-full w-full p-14">
+                                    <motion.div
+                                        key={pathname}
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        transition={{ duration: 1, ease: [0.6, -0.05, 0.01, 0.99] }}
+                                        className="h-full w-full"
+                                    >
+                                        <Outlet />
+                                    </motion.div>
+                                </div>
+                            </div>
+                        }
+                    >
+                        <Route index element={<Home />} />
+                        <Route path="app" element={<WeatherApp />} />
+                    </Route>
+                    <Route path="*" element={<NotFound />} />
+                </Routes>
+            </AnimatePresence>
+        </ThemeProvider>
+    );
 }
 
 export default App;
