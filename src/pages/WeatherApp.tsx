@@ -8,7 +8,7 @@ import {
     Typography,
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
     BackendService,
     WeatherInfo,
@@ -28,11 +28,28 @@ export default function WeatherApp() {
 
     const [loadingWeather, setLoadingWeather] = useState(false);
 
+    let { location } = useParams();
+
     useEffect(() => {
-        BackendService.getFavorites().then((favorites) => {
-            setFavoriteCities(favorites);
-        });
-    }, []);
+        BackendService.getFavorites()
+            .then((favorites) => {
+                setFavoriteCities(favorites);
+            })
+            .catch(() => {});
+
+        if (location) {
+            setLoadingWeather(true);
+            BackendService.getWeather(location)
+                .then((weatherInfo) => {
+                    setWeather(weatherInfo);
+                    setLoadingWeather(false);
+                })
+                .catch(() => {
+                    setWeather({ error: "Something went wrong." });
+                    setLoadingWeather(false);
+                });
+        }
+    }, [location]);
 
     return (
         <div className="border-solid border border-[#4e4668] rounded-2xl h-full flex flex-col">
@@ -110,6 +127,8 @@ function Header({
                         if (!input) return;
 
                         const cityName = input.value;
+                        window.history.replaceState(null, "", `/app/${cityName}`);
+
                         let weatherInfo: WeatherInfo | WeatherError;
                         try {
                             weatherInfo = await BackendService.getWeather(cityName);
@@ -172,6 +191,7 @@ function FavoriteTab({
             className="min-w-0 p-0 h-[3rem] hover:bg-[#725ac1] hover:text-white text-white focus:bg-[#725ac1] focus:text-white active:bg-[#725ac1] active:text-white"
             onClick={() => {
                 setLoadingWeather(true);
+                window.history.replaceState(null, "", `/app/${city}`);
 
                 BackendService.getWeather(city)
                     .then((weatherInfo) => {
