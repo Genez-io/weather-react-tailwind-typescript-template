@@ -31,7 +31,7 @@ function App() {
                         }
                     >
                         <Route index element={<Home />} />
-                        <Route path="app" element={<WeatherApp />} />
+                        <Route path="app/:location?" element={<WeatherApp />} />
                     </Route>
                     <Route path="*" element={<NotFound />} />
                 </Routes>
