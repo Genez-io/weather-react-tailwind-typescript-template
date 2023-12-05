@@ -9,10 +9,7 @@ import {
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-    BackendService,
-    WeatherInfo,
-} from "@genezio-sdk/weather-backend-typescript-template_us-east-1";
+import { BackendService, WeatherInfo } from "@genezio-sdk/(•◡•)project-name(•◡•)_(•◡•)region(•◡•)";
 import Star from "./svg/Star";
 import Logo from "./svg/Logo";
 // @ts-ignore Missing types for this package

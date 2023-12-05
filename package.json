@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@genezio-sdk/weather-backend-typescript-template_us-east-1": "^1.0.0-prod",
+    "@genezio-sdk/(•◡•)project-name(•◡•)_(•◡•)region(•◡•)": "^1.0.0-prod",
     "@material-tailwind/react": "^2.1.4",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
