@@ -10,7 +10,7 @@ import {
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
-  BackendService,
+  WeatherService,
   WeatherInfo,
 } from "@genezio-sdk/(•◡•)project-name(•◡•)_(•◡•)region(•◡•)";
 import Star from "./svg/Star";
@@ -33,7 +33,7 @@ export default function WeatherApp() {
   const { location } = useParams();
 
   useEffect(() => {
-    BackendService.getFavorites()
+    WeatherService.getFavorites()
       .then((favorites) => {
         setFavoriteCities(favorites);
       })
@@ -41,7 +41,7 @@ export default function WeatherApp() {
 
     if (location) {
       setLoadingWeather(true);
-      BackendService.getWeather(location)
+      WeatherService.getWeather(location)
         .then((weatherInfo) => {
           setWeather(weatherInfo);
           setLoadingWeather(false);
@@ -135,7 +135,7 @@ function Header({
 
             let weatherInfo: WeatherInfo | WeatherError;
             try {
-              weatherInfo = await BackendService.getWeather(cityName);
+              weatherInfo = await WeatherService.getWeather(cityName);
             } catch (e) {
               weatherInfo = { error: "Something went wrong." };
             }
@@ -197,7 +197,7 @@ function FavoriteTab({
         setLoadingWeather(true);
         window.history.replaceState(null, "", `/app/${city}`);
 
-        BackendService.getWeather(city)
+        WeatherService.getWeather(city)
           .then((weatherInfo) => {
             setWeather(weatherInfo);
             setLoadingWeather(false);
@@ -288,14 +288,14 @@ function WeatherDisplay({
                 const newFavoriteCities = favoriteCities.filter(
                   (city) => city !== weather.originalLocation,
                 );
-                BackendService.setFavorites(newFavoriteCities);
+                WeatherService.setFavorites(newFavoriteCities);
                 setFavoriteCities(newFavoriteCities);
               } else {
                 const newFavoriteCities = [
                   ...favoriteCities,
                   weather.originalLocation,
                 ];
-                BackendService.setFavorites(newFavoriteCities);
+                WeatherService.setFavorites(newFavoriteCities);
                 setFavoriteCities(newFavoriteCities);
               }
             }}
