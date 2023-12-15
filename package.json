@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@genezio-sdk/(•◡•)project-name(•◡•)_(•◡•)region(•◡•)": "^1.0.0-prod",
+    "@genezio/vite-plugin-genezio": "^1.0.4",
     "@material-tailwind/react": "^2.1.5",
     "react": "^18.2.0",
     "react-animated-weather": "^4.0.1",

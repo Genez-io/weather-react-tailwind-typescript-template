@@ -12,15 +12,13 @@ import { useNavigate, useParams } from "react-router-dom";
 import {
   WeatherService,
   WeatherInfo,
-} from "@genezio-sdk/(•◡•)project-name(•◡•)_(•◡•)region(•◡•)";
+  WeatherError,
+  WeatherErrorType,
+} from "@genezio-sdk/weather-backend-typescript-template_us-east-1";
 import Star from "./svg/Star";
 import Logo from "./svg/Logo";
 // @ts-expect-error Missing types for this package
 import ReactAnimatedWeather from "react-animated-weather";
-
-type WeatherError = {
-  error: string;
-};
 
 export default function WeatherApp() {
   const [favoriteCities, setFavoriteCities] = useState<string[]>([]);
@@ -41,15 +39,10 @@ export default function WeatherApp() {
 
     if (location) {
       setLoadingWeather(true);
-      WeatherService.getWeather(location)
-        .then((weatherInfo) => {
-          setWeather(weatherInfo);
-          setLoadingWeather(false);
-        })
-        .catch(() => {
-          setWeather({ error: "Something went wrong." });
-          setLoadingWeather(false);
-        });
+      WeatherService.getWeather(location).then((weatherInfo) => {
+        setWeather(weatherInfo);
+        setLoadingWeather(false);
+      });
     }
   }, [location]);
 
@@ -126,19 +119,14 @@ function Header({
             setLoadingWeather(true);
 
             const input = document.getElementById(
-              "cityInput",
+              "cityInput"
             ) as HTMLInputElement;
             if (!input) return;
 
             const cityName = input.value;
             window.history.replaceState(null, "", `/app/${cityName}`);
 
-            let weatherInfo: WeatherInfo | WeatherError;
-            try {
-              weatherInfo = await WeatherService.getWeather(cityName);
-            } catch (e) {
-              weatherInfo = { error: "Something went wrong." };
-            }
+            const weatherInfo = await WeatherService.getWeather(cityName);
 
             setWeather(weatherInfo);
             setLoadingWeather(false);
@@ -197,15 +185,10 @@ function FavoriteTab({
         setLoadingWeather(true);
         window.history.replaceState(null, "", `/app/${city}`);
 
-        WeatherService.getWeather(city)
-          .then((weatherInfo) => {
-            setWeather(weatherInfo);
-            setLoadingWeather(false);
-          })
-          .catch(() => {
-            setWeather({ error: "Something went wrong." });
-            setLoadingWeather(false);
-          });
+        WeatherService.getWeather(city).then((weatherInfo) => {
+          setWeather(weatherInfo);
+          setLoadingWeather(false);
+        });
       }}
     >
       <ListItemPrefix>
@@ -256,7 +239,21 @@ function WeatherDisplay({
   }
 
   // If weather is instance of WeatherError
-  if ("error" in weather) {
+  if (weather.status === "error") {
+    let message: string;
+    switch (weather.type) {
+      case WeatherErrorType.NotFound:
+        message = "The searched city may not exist.";
+        break;
+      case WeatherErrorType.ServiceDown:
+        message = "The external weather API (wttr.in) may be down.";
+        break;
+      case WeatherErrorType.Unknown:
+      default:
+        message = "An unknown error occurred.";
+        break;
+    }
+
     return (
       <div className="flex flex-col justify-center items-center h-full">
         <div className="[&>*]:w-[10rem] [&>*]:h-[10rem]">
@@ -266,7 +263,7 @@ function WeatherDisplay({
           Something went wrong.
         </Typography>
         <Typography variant="h5" className="text-center m-0 font-medium">
-          The searched city may not exist or the Weather API may be down.
+          {message}
         </Typography>
       </div>
     );
@@ -286,7 +283,7 @@ function WeatherDisplay({
             onClick={() => {
               if (favoriteCities.includes(weather.originalLocation)) {
                 const newFavoriteCities = favoriteCities.filter(
-                  (city) => city !== weather.originalLocation,
+                  (city) => city !== weather.originalLocation
                 );
                 WeatherService.setFavorites(newFavoriteCities);
                 setFavoriteCities(newFavoriteCities);
